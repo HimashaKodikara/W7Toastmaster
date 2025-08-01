@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Event;
 use App\Events\LoggableEvent;
 use App\Helpers\StorageHelper;
-use Yajra\DataTables\Facades\DataTables;
+
 
 class NewsController extends Controller
 {
@@ -39,7 +39,6 @@ class NewsController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'status' => 'required|in:active,inactive',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -57,8 +56,9 @@ class NewsController extends Controller
             $news = new News();
             $news->title = $request->title;
             $news->body = $request->body;
-            $news->status = $request->status;
             $news->image = $imgName;
+            $news->created_at = $request->created_at ? date('Y-m-d H:i:s', strtotime($request->created_at)) : now();
+            $news->deleted_at = $request->deleted_at ;
             $news->save();
 
             DB::commit();
@@ -151,7 +151,7 @@ class NewsController extends Controller
     /**
      * AJAX data for DataTables
      */
-    public function getAjaxHopitalData()
+    public function getAjaxNewsData()
     {
         $model = News::query()->orderBy('id', 'desc');
 
@@ -159,7 +159,7 @@ class NewsController extends Controller
             ->addIndexColumn()
             ->editColumn('title', fn ($news) => $news->title)
             ->addColumn('edit', function ($news) {
-                $edit_url = route('news.show-news', encrypt($news->id));
+                $edit_url = route('news.show', encrypt($news->id));
                 return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
             })
             ->addColumn('activation', function ($news) {
@@ -188,6 +188,47 @@ class NewsController extends Controller
         $data->save();
         Event::dispatch(new LoggableEvent($data, 'statuschange'));
 
-        return redirect()->route('news.index')->with('success', 'Record status updated successfully.');
+        return redirect()->route('news.news')->with('success', 'Record status updated successfully.');
     }
+
+    public function getNewsJson(Request $request)
+{
+    $query = DB::table('news')->select('id', 'title', 'status'); // Add other fields only if needed
+
+    $recordsTotal = $query->count();
+
+    // Search filtering
+    if ($search = $request->input('search.value')) {
+        $query->where('title', 'like', "%{$search}%");
+    }
+
+    $recordsFiltered = $query->count();
+
+    // Pagination
+    $data = $query
+        ->offset($request->input('start'))
+        ->limit($request->input('length'))
+        ->orderBy('id', 'desc')
+        ->get();
+
+    // Map the result
+    $data = $data->map(function ($item, $index) {
+        return [
+            'index' => $index + 1,
+            'title' => $item->title,
+            'activation' => view('admin.news.partials._status', ['news' => $item])->render(),
+            'edit' => '<a href="' . route('news.show', $item->id) . '"><i class="fal fa-edit"></i></a>',
+            'delete' => view('admin.news.partials._delete', ['news' => $item])->render(),
+        ];
+    });
+
+    return response()->json([
+        'draw' => intval($request->input('draw')),
+        'recordsTotal' => $recordsTotal,
+        'recordsFiltered' => $recordsFiltered,
+        'data' => $data,
+    ]);
 }
+}
+
+

@@ -6,7 +6,7 @@
             <div class="bg-white shadow-lg rounded-lg p-6">
                 <!-- Header with View All button on the right -->
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Create New Post</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">Create New News</h2>
                     <a href="{{ route('news.news') }}">
                         <button class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                             <i class="fas fa-list mr-2"></i>
@@ -15,18 +15,18 @@
                     </a>
                 </div>
 
-                <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form action="{{ route('news.store-news') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <!-- Topic Field -->
                     <div>
-                        <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">
-                            Topic
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                            Title
                         </label>
                         <input
                             type="text"
-                            name="topic"
-                            id="topic"
+                            name="title"
+                            id="title"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter topic"
                             required
@@ -71,8 +71,8 @@
                             </label>
                             <input
                                 type="datetime-local"
-                                name="created_date"
-                                id="created_date"
+                                name="created_at"
+                                id="created_at"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 value="{{ now()->format('Y-m-d\TH:i') }}"
                                 required
@@ -86,8 +86,8 @@
                             </label>
                             <input
                                 type="datetime-local"
-                                name="removed_date"
-                                id="removed_date"
+                                name="deleted_at"
+                                id="deleted_at"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
                             <p class="mt-1 text-sm text-gray-500">Optional - Leave blank if not applicable</p>

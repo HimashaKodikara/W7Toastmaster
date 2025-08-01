@@ -25,12 +25,16 @@ Route::get('/news', function (){
 Route::group([
     'prefix' => 'news',
     'as' => 'news.'
-],function(){
-    Route::get('/',[NewsController::class,'index'])->name('news');
-    Route::get('/create',[NewsController::class,'create'])->name('create-news');
-    Route::post('/store',[NewsController::class,'store'])->name('store-news');
-    
-
+], function () {
+    Route::get('/', [NewsController::class, 'index'])->name('news');
+    Route::get('/create', [NewsController::class, 'create'])->name('create-news');
+    Route::post('/store', [NewsController::class, 'store'])->name('store-news');
+    Route::get('/edit/{id}', [NewsController::class, 'show'])->name('show');
+    Route::get('/get-news', [NewsController::class, 'getAjaxNewsData'])->name('get-news'); // <-- fixed here
+    Route::put('/update-news/{id}', [NewsController::class, 'update'])->name('update-news');
+    Route::get('/change-status/{id}', [NewsController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-news/{id}', [NewsController::class, 'destroy'])->name('delete-news');
+    Route::get('/get-news-json', [NewsController::class, 'getNewsJson'])->name('index.json');
 });
 
 require __DIR__.'/auth.php';
