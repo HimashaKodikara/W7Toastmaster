@@ -4,7 +4,7 @@
   @method('delete')
    <button type="submit"
     class="btn btn-link">
-  <i class="fal fa-trash-alt"></i>
+  <i class="fas fa-trash-alt"></i>
   </button>
 </form>
 

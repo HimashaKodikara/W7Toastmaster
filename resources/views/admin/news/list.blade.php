@@ -88,7 +88,6 @@
                 language: {
                     processing: "Processing request...",
                     search: "Search records:",
-                    lengthMenu: "Display _MENU_ records per page",
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
                     infoEmpty: "No records available",
                     infoFiltered: "(filtered from _MAX_ total records)",
@@ -141,32 +140,5 @@
         });
     </script>
 
-    <style>
-        /* Custom formal styling for DataTable */
-        #newsTable_wrapper {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
-        #newsTable thead th {
-            background-color: #f8fafc;
-            font-weight: 700;
-        }
-
-        #newsTable tbody tr:hover {
-            background-color: #f1f5f9;
-        }
-
-        .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
-        .dataTables_wrapper .dataTables_paginate {
-            margin: 1rem 0;
-        }
-
-        .dataTables_wrapper .dataTables_filter input {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem;
-        }
-    </style>
 @endsection

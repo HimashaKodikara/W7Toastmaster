@@ -136,99 +136,160 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    // public function destroy(string $id)
+    // {
+    //     try{
+    //         DB::beginTransaction();
+    //         $news = News::find($id);
+
+    //         News::with([])->find($id)->delete();
+
+    //         DB::commit();
+
+    //         Event::dispatch(new LoggableEvent($news, 'deleted'));
+
+    //         return redirect()->route('news.news')->with('success',APIResponseMessage::DELETED);
+    //     }catch(\Exception $e){
+    //         DB::rollBack();
+    //         return redirect()->route('news.news')->with('error',APIResponseMessage::FAIL);
+    //     }
+    // }
+
     public function destroy(string $id)
-    {
-        try {
-            $news = News::findOrFail(decrypt($id));
-            $news->delete();
-            Event::dispatch(new LoggableEvent($news, 'deleted'));
-            return redirect()->route('news.news')->with('success', 'News deleted successfully.');
-        } catch (Exception $e) {
-            return redirect()->route('news.news')->with('error', 'Failed to delete news.');
+{
+    try {
+        DB::beginTransaction();
+
+        $news = News::find($id);
+
+        if (!$news) {
+            return redirect()->route('news.news')->with('error', 'News not found.');
         }
+
+        $news->delete();
+
+        DB::commit();
+
+        Event::dispatch(new LoggableEvent($news, 'deleted'));
+
+        return redirect()->route('news.news')->with('success', APIResponseMessage::DELETED);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('news.news')->with('error', APIResponseMessage::FAIL);
     }
+}
+
 
     /**
      * AJAX data for DataTables
      */
-    public function getAjaxNewsData()
-    {
-        $model = News::query()->orderBy('id', 'desc');
+    // public function getAjaxNewsData()
+    // {
+    //     $model = News::query()->orderBy('id', 'desc');
 
-        return DataTables::eloquent($model)
-            ->addIndexColumn()
-            ->editColumn('title', fn ($news) => $news->title)
-            ->addColumn('edit', function ($news) {
-                $edit_url = route('news.show', encrypt($news->id));
-                return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
-            })
-            ->addColumn('activation', function ($news) {
-                return view('admin.news.partials._status', compact('news'));
-            })
-            ->addColumn('delete', function ($news) {
-                return view('admin.news.partials._delete', compact('news'));
-            })
-            ->rawColumns(['edit', 'activation', 'delete'])
-            ->toJson();
-    }
+    //     return DataTables::eloquent($model)
+    //         ->addIndexColumn()
+    //         ->editColumn('title', fn ($news) => $news->title)
+    //         ->addColumn('edit', function ($news) {
+    //             $edit_url = route('news.show', encrypt($news->id));
+    //             return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
+    //         })
+    //         ->addColumn('activation', function ($news) {
+    //             return view('admin.news.partials._status', compact('news'));
+    //         })
+    //         ->addColumn('delete', function ($news) {
+    //             return view('admin.news.partials._delete', compact('news'));
+    //         })
+    //         ->rawColumns(['edit', 'activation', 'delete'])
+    //         ->toJson();
+    // }
 
     /**
      * Change activation status
      */
     public function activation(Request $request)
     {
-        $data = News::findOrFail($request->id);
 
-        if ($data->status == 'active') {
-            $data->status = 'inactive';
+        $data = News::find($request->id);
+
+        if ($data->status == 'Y') {
+            $data->status = 'N';
+            $data->save();
+            $id = $data->id;
+
+         Event::dispatch(new LoggableEvent($data, 'statuschange'));
+
+        return redirect()->route('news.news')->with('success', 'Record deactivate successfully.');
+
         } else {
-            $data->status = 'active';
+           $data->status = "Y";
+            $data->save();
+            $id = $data->id;
+
+            // Dispatch Activity Event to log this creation
+            Event::dispatch(new LoggableEvent($data, 'statuschange'));
+
+            return redirect()->route('news.news')->with('success', 'Record activate successfully.');
         }
 
-        $data->save();
-        Event::dispatch(new LoggableEvent($data, 'statuschange'));
 
-        return redirect()->route('news.news')->with('success', 'Record status updated successfully.');
     }
 
-    public function getNewsJson(Request $request)
-{
-    $query = DB::table('news')->select('id', 'title', 'status'); // Add other fields only if needed
+//  public function activation(Request $request)
+// {
+//     $data = News::find($request->id);
 
-    $recordsTotal = $query->count();
+//     if (!$data) {
+//         return redirect()->route('news.news')->with('error', 'Record not found.');
+//     }
 
-    // Search filtering
-    if ($search = $request->input('search.value')) {
-        $query->where('title', 'like', "%{$search}%");
+//     $data->status = $data->status == 'Y' ? 'N' : 'Y';
+//     $data->save();
+
+//     Event::dispatch(new LoggableEvent($data, 'statuschange'));
+
+//     return redirect()->route('news.news')->with('success', 'Record ' . ($data->status == 'Y' ? 'activated' : 'deactivated') . ' successfully.');
+// }
+
+
+        public function getNewsJson(Request $request)
+    {
+        $query = DB::table('news')->select('id', 'title', 'status'); // Add other fields only if needed
+
+        $recordsTotal = $query->count();
+
+        // Search filtering
+        if ($search = $request->input('search.value')) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        $recordsFiltered = $query->count();
+
+        // Pagination
+        $data = $query
+            ->offset($request->input('start'))
+            ->limit($request->input('length'))
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Map the result
+        $data = $data->map(function ($item, $index) {
+            return [
+                'index' => $index + 1,
+                'title' => $item->title,
+                'activation' => view('admin.news.partials._status', ['news' => $item])->render(),
+                'edit' => '<a href="' . route('news.show', $item->id) . '"><i class="fas fa-edit"></i></a>',
+                'delete' => view('admin.news.partials._delete', ['news' => $item])->render(),
+            ];
+        });
+
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
     }
-
-    $recordsFiltered = $query->count();
-
-    // Pagination
-    $data = $query
-        ->offset($request->input('start'))
-        ->limit($request->input('length'))
-        ->orderBy('id', 'desc')
-        ->get();
-
-    // Map the result
-    $data = $data->map(function ($item, $index) {
-        return [
-            'index' => $index + 1,
-            'title' => $item->title,
-            'activation' => view('admin.news.partials._status', ['news' => $item])->render(),
-            'edit' => '<a href="' . route('news.show', $item->id) . '"><i class="fal fa-edit"></i></a>',
-            'delete' => view('admin.news.partials._delete', ['news' => $item])->render(),
-        ];
-    });
-
-    return response()->json([
-        'draw' => intval($request->input('draw')),
-        'recordsTotal' => $recordsTotal,
-        'recordsFiltered' => $recordsFiltered,
-        'data' => $data,
-    ]);
-}
-}
+    }
 
 
