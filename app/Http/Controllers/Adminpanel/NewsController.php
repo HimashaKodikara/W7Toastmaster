@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Adminpanel;
 use Exception;
 use App\Models\News;
 use Illuminate\Http\Request;
+use App\Events\LoggableEvent;
+use App\Helpers\StorageHelper;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\APIResponseMessage;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Event;
-use App\Events\LoggableEvent;
-use App\Helpers\StorageHelper;
+use Yajra\DataTables\Facades\DataTables;
+
 
 
 class NewsController extends Controller
@@ -58,7 +60,7 @@ class NewsController extends Controller
             $news->body = $request->body;
             $news->image = $imgName;
             $news->created_at = $request->created_at ? date('Y-m-d H:i:s', strtotime($request->created_at)) : now();
-            $news->deleted_at = $request->deleted_at ;
+
             $news->save();
 
             DB::commit();
@@ -88,11 +90,6 @@ class NewsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $news = News::findOrFail(decrypt($id));
-        return view('admin.news.edit', compact('news'));
-    }
 
     /**
      * Update the specified resource in storage.
@@ -183,26 +180,36 @@ class NewsController extends Controller
     /**
      * AJAX data for DataTables
      */
-    // public function getAjaxNewsData()
-    // {
-    //     $model = News::query()->orderBy('id', 'desc');
+   public function getAjaxNewsData()
+{
+    try {
 
-    //     return DataTables::eloquent($model)
-    //         ->addIndexColumn()
-    //         ->editColumn('title', fn ($news) => $news->title)
-    //         ->addColumn('edit', function ($news) {
-    //             $edit_url = route('news.show', encrypt($news->id));
-    //             return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
-    //         })
-    //         ->addColumn('activation', function ($news) {
-    //             return view('admin.news.partials._status', compact('news'));
-    //         })
-    //         ->addColumn('delete', function ($news) {
-    //             return view('admin.news.partials._delete', compact('news'));
-    //         })
-    //         ->rawColumns(['edit', 'activation', 'delete'])
-    //         ->toJson();
-    // }
+        $model = News::query()->orderBy('id', 'desc');
+
+        return DataTables::eloquent($model)
+            ->addIndexColumn()
+            ->editColumn('title', function ($news) {
+                return $news['title'];
+            })
+            ->addColumn('edit', function ($news) {
+                $edit_url = route('news.show-news', encrypt($news->id));
+                return '<a href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+            })
+            ->addColumn('activation', function ($news) {
+                return view('admin.news.partials._status', compact('news'))->render();
+            })
+            ->addColumn('delete', function ($news) {
+                return view('admin.news.partials._delete', compact('news'))->render();
+            })
+            ->rawColumns(['edit', 'activation', 'delete'])
+            ->toJson();
+
+    } catch (\Exception $e) {
+        dd($e);
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
 
     /**
      * Change activation status
@@ -212,7 +219,8 @@ class NewsController extends Controller
 
         $data = News::find($request->id);
 
-        if ($data->status == 'Y') {
+        if ($data->status == "Y") {
+
             $data->status = 'N';
             $data->save();
             $id = $data->id;
@@ -252,44 +260,26 @@ class NewsController extends Controller
 // }
 
 
-        public function getNewsJson(Request $request)
-    {
-        $query = DB::table('news')->select('id', 'title', 'status'); // Add other fields only if needed
+    //     public function getNewsJson(Request $request)
+    // {
 
-        $recordsTotal = $query->count();
+    //       $model = News::query()->orderBy('id', 'desc');
 
-        // Search filtering
-        if ($search = $request->input('search.value')) {
-            $query->where('title', 'like', "%{$search}%");
-        }
+    //     return DataTables::eloquent($model)
+    //         ->addIndexColumn()
+    //         ->editColumn('title', fn ($news) => $news->title)
+    //         ->addColumn('edit', function ($news) {
+    //             $edit_url = route('news.show', encrypt($news->id));
+    //             return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
+    //         })
+    //         ->addColumn('activation', function ($news) {
+    //             return view('admin.news.partials._status', compact('news'));
+    //         })
+    //         ->addColumn('delete', function ($news) {
+    //             return view('admin.news.partials._delete', compact('news'));
+    //         })
+    //         ->rawColumns(['edit', 'activation', 'delete'])
+    //         ->toJson();
+    // }
 
-        $recordsFiltered = $query->count();
-
-        // Pagination
-        $data = $query
-            ->offset($request->input('start'))
-            ->limit($request->input('length'))
-            ->orderBy('id', 'desc')
-            ->get();
-
-        // Map the result
-        $data = $data->map(function ($item, $index) {
-            return [
-                'index' => $index + 1,
-                'title' => $item->title,
-                'activation' => view('admin.news.partials._status', ['news' => $item])->render(),
-                'edit' => '<a href="' . route('news.show', $item->id) . '"><i class="fas fa-edit"></i></a>',
-                'delete' => view('admin.news.partials._delete', ['news' => $item])->render(),
-            ];
-        });
-
-        return response()->json([
-            'draw' => intval($request->input('draw')),
-            'recordsTotal' => $recordsTotal,
-            'recordsFiltered' => $recordsFiltered,
-            'data' => $data,
-        ]);
-    }
-    }
-
-
+}
