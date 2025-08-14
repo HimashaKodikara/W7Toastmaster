@@ -39,7 +39,7 @@
                         {{ __('Executive Members') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('contact-us.contact-us') }}" >
                         {{ __('Contact Us') }}
                     </x-nav-link>
                 </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Adminpanel\NewsController;
 use App\Http\Controllers\Adminpanel\GalleryController;
 use App\Http\Controllers\Adminpanel\MemeberController;
+use App\Http\Controllers\Adminpanel\ContactUsController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -69,4 +70,20 @@ Route::group([
     Route::delete('/delete-gallery/{id}', [GalleryController::class, 'destroy'])->name('delete-gallery');
     Route::get('/get-gallery-json', [GalleryController::class, 'getgalleryJson'])->name('index.json');
 });
+
+Route::group([
+    'prefix' => 'contact-us',
+    'as' => 'contact-us.'
+], function () {
+     Route::get('/', [ContactUsController::class, 'index'])->name('contact-us');
+    Route::get('/create', [ContactUsController::class, 'create'])->name('create');
+    Route::post('/store', [ContactUsController::class, 'store'])->name('store-contact');
+    Route::get('/{id}', [ContactUsController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [ContactUsController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ContactUsController::class, 'update'])->name('update');
+    Route::delete('/{id}', [ContactUsController::class, 'destroy'])->name('destroy');
+
+
+});
+
 require __DIR__.'/auth.php';
