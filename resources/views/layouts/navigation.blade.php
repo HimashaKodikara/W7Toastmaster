@@ -19,7 +19,7 @@
                         {{ __('Members') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('gallery.gallery') }}">
                         {{ __('Gallery') }}
                     </x-nav-link>
 

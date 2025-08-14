@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Adminpanel\NewsController;
+use App\Http\Controllers\Adminpanel\GalleryController;
 use App\Http\Controllers\Adminpanel\MemeberController;
 
 Route::get('/', function () {
@@ -53,4 +54,19 @@ Route::group([
     Route::get('/get-member-json', [MemeberController::class, 'getmemberJson'])->name('index.json');
 });
 
+
+Route::group([
+    'prefix' => 'gallery',
+    'as' => 'gallery.'
+], function () {
+    Route::get('/', [GalleryController::class, 'index'])->name('gallery');
+    Route::get('/create', [GalleryController::class, 'create'])->name('create-gallery');
+    Route::post('/store', [GalleryController::class, 'store'])->name('store-gallery');
+    Route::get('/edit/{id}', [GalleryController::class, 'show'])->name('show-gallery');
+    Route::get('/get-gallery', [GalleryController::class, 'getAjaxGalleryData'])->name('get-gallery');
+    Route::put('/update-gallery/{id}', [GalleryController::class, 'update'])->name('update-gallery');
+    Route::get('/change-status/{id}', [GalleryController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-gallery/{id}', [GalleryController::class, 'destroy'])->name('delete-gallery');
+    Route::get('/get-gallery-json', [GalleryController::class, 'getgalleryJson'])->name('index.json');
+});
 require __DIR__.'/auth.php';
