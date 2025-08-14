@@ -101,7 +101,6 @@ class NewsController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'status' => 'required|in:active,inactive',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -117,7 +116,6 @@ class NewsController extends Controller
 
             $news->title = $request->title;
             $news->body = $request->body;
-            $news->status = $request->status;
             $news->save();
 
             DB::commit();
@@ -133,24 +131,7 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(string $id)
-    // {
-    //     try{
-    //         DB::beginTransaction();
-    //         $news = News::find($id);
-
-    //         News::with([])->find($id)->delete();
-
-    //         DB::commit();
-
-    //         Event::dispatch(new LoggableEvent($news, 'deleted'));
-
-    //         return redirect()->route('news.news')->with('success',APIResponseMessage::DELETED);
-    //     }catch(\Exception $e){
-    //         DB::rollBack();
-    //         return redirect()->route('news.news')->with('error',APIResponseMessage::FAIL);
-    //     }
-    // }
+   
 
     public function destroy(string $id)
 {
@@ -242,44 +223,5 @@ class NewsController extends Controller
 
 
     }
-
-//  public function activation(Request $request)
-// {
-//     $data = News::find($request->id);
-
-//     if (!$data) {
-//         return redirect()->route('news.news')->with('error', 'Record not found.');
-//     }
-
-//     $data->status = $data->status == 'Y' ? 'N' : 'Y';
-//     $data->save();
-
-//     Event::dispatch(new LoggableEvent($data, 'statuschange'));
-
-//     return redirect()->route('news.news')->with('success', 'Record ' . ($data->status == 'Y' ? 'activated' : 'deactivated') . ' successfully.');
-// }
-
-
-    //     public function getNewsJson(Request $request)
-    // {
-
-    //       $model = News::query()->orderBy('id', 'desc');
-
-    //     return DataTables::eloquent($model)
-    //         ->addIndexColumn()
-    //         ->editColumn('title', fn ($news) => $news->title)
-    //         ->addColumn('edit', function ($news) {
-    //             $edit_url = route('news.show', encrypt($news->id));
-    //             return '<a href="' . $edit_url . '"><i class="fal fa-edit"></i></a>';
-    //         })
-    //         ->addColumn('activation', function ($news) {
-    //             return view('admin.news.partials._status', compact('news'));
-    //         })
-    //         ->addColumn('delete', function ($news) {
-    //             return view('admin.news.partials._delete', compact('news'));
-    //         })
-    //         ->rawColumns(['edit', 'activation', 'delete'])
-    //         ->toJson();
-    // }
 
 }

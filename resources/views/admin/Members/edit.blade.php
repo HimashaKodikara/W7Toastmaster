@@ -6,85 +6,141 @@
         <main>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                 <div class="bg-white rounded-lg shadow-md p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Edit Article</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Edit Member Details</h2>
 
 
-                    <form id="articleForm" class="space-y-6">
-                        <!-- Row 1: Topic and Image -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Topic Field -->
-                            <div>
-                                <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Topic
-                                </label>
-                                <input type="text" id="topic" name="topic" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none"
-                                    placeholder="Enter article topic">
-                            </div>
+                   <form action="{{ route('member.update-member', encrypt($member->id)) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    @method('PUT')
+                    <!-- Name Field -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Name <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            value="{{ old('topic', $member->name ?? '') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter full name"
+
+                            required
+                        >
+                        @error('name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Image Field -->
+                    <div>
+                        <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
+                            Profile Image
+                        </label>
+                        <input
+                            type="file"
+                            name="image"
+                            id="image"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            accept="image/*"
+                        >
+                        <p class="mt-1 text-sm text-gray-500">Upload a profile picture (optional)</p>
+                        <!-- Show current image if exists -->
+                            @if(isset($member->image) && $member->image)
+                                <div class="mt-3">
+                                    <p class="text-sm text-gray-600 mb-2">Current Image:</p>
+                                    <img src="{{ asset('storage/membersimage/' . $member->image) }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg">
+                                </div>
+                            @endif
+                        @error('image')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Testimonial Field -->
+                    <div>
+                        <label for="testimonial" class="block text-sm font-medium text-gray-700 mb-2">
+                            Testimonial <span class="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            name="testimonial"
+                            id="testimonial"
+                            rows="6"
+                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter testimonial content"
+                            required
+                        >{{ old('body', $member->testimonial ?? '') }}</textarea>
+                        @error('testimonial')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
 
-                            <div>
-                                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Image
-                                </label>
-                                <input type="file" id="image" name="image" accept="image/*"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                            </div>
-                        </div>
+                    <!-- Social Media Links Section -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Social Media Links (Optional)</h3>
 
-                        <!-- Row 2: Body (Full Width) -->
-                        <div>
-                            <label for="body" class="block text-sm font-medium text-gray-700 mb-2">
-                                Body
+                        <!-- LinkedIn Link Field -->
+                        <div class="mb-4">
+                            <label for="linkedin_link" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fab fa-linkedin text-blue-600 mr-2"></i>LinkedIn Profile
                             </label>
-                            <textarea id="body" name="body" rows="8" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none resize-vertical"
-                                placeholder="Enter article content..." @if(isset($news->body))>{{ $news->body }}</textarea>
+                            <input
+                                type="url"
+                                name="linkedin_link"
+                                id="linkedin_link"
+                                value="{{ old('topic', $member->linkedin_link ?? '') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="https://linkedin.com/in/username"
+                            >
+                            @error('linkedin_link')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <!-- Row 3: Created Date and Remove Date -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Created Date Field -->
-                            <div>
-                                <label for="createdDate" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Created Date
-                                </label>
-                                <input type="datetime-local" id="createdDate" name="createdDate" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none">
-                            </div>
-
-                            <!-- Remove Date Field -->
-                            <div>
-                                <label for="removeDate" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Remove Date
-                                </label>
-                                <input type="datetime-local" id="removeDate" name="removeDate"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none">
-                                <p class="text-sm text-gray-500 mt-1">Optional: Set when this article should be
-                                    automatically removed</p>
-                            </div>
+                        <!-- Instagram Link Field (FIXED TYPO) -->
+                        <div>
+                            <label for="instagram_link" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fab fa-instagram text-pink-600 mr-2"></i>Instagram Profile
+                            </label>
+                            <input
+                                type="url"
+                                name="instergram_link"
+                                id="instergram_link"
+                                value="{{ old('topic', $member->instergram_link ?? '') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="https://instagram.com/username"
+                            >
+                            @error('instagram_link')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+                    </div>
 
-                        <!-- Row 4: Buttons -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
-                            <!-- Submit Button -->
-                            <button type="submit"
-                                class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform hover:scale-105">
-                                Create Article
+                    <!-- Submit Button -->
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <a href="{{ route('member.member') }}">
+                            <button
+                                type="button"
+                                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                Cancel
                             </button>
-
-                            <!-- Reset Button -->
-                            <button type="reset"
-                                class="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
-                                Reset Form
-                            </button>
-                        </div>
-                    </form>
+                        </a>
+                        <button
+                            type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            <i class="fas fa-plus mr-2"></i>
+                            Update Member
+                        </button>
+                    </div>
+                </form>
                 </div>
             </div>
 
             <script>
-                // Set current date and time as default for created date
+
                 document.addEventListener('DOMContentLoaded', function() {
                     const now = new Date();
                     const currentDateTime = now.toISOString().slice(0, 16);

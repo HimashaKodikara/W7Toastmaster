@@ -15,7 +15,7 @@
                         {{ __('News') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('member.member') }}">
                         {{ __('Members') }}
                     </x-nav-link>
 

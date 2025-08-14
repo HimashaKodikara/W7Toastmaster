@@ -19,7 +19,7 @@
                                 <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">
                                     Topic
                                 </label>
-                                <input type="text" id="topic" name="topic" value="{{ old('topic', $news->title ?? '') }}" required
+                                <input type="text" id="title" name="title" value="{{ old('topic', $news->title ?? '') }}" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none"
                                     placeholder="Enter article topic">
                                 @error('topic')
@@ -43,12 +43,11 @@
                             @if(isset($news->image) && $news->image)
                                 <div class="mt-3">
                                     <p class="text-sm text-gray-600 mb-2">Current Image:</p>
-                                    <img src="{{ asset('storage/app/public/newsimage' . $news->image) }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg">
+                                    <img src="{{ asset('storage/newsimage/' . $news->image) }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg">
                                 </div>
                             @endif
                         </div>
 
-                        <!-- Row 2: Body (Full Width) -->
                         <div>
                             <label for="body" class="block text-sm font-medium text-gray-700 mb-2">
                                 Body

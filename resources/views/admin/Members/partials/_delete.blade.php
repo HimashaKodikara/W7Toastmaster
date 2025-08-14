@@ -1,4 +1,4 @@
-<form method="POST" action="{{ route('news.delete-news', $news->id) }}" class="d-inline"
+<form method="POST" action="{{ route('member.delete-member', $member->id) }}" class="d-inline"
     onsubmit="return submitDeleteForm(this)">
   @csrf
   @method('delete')

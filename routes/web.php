@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Adminpanel\NewsController;
+use App\Http\Controllers\Adminpanel\MemeberController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -35,6 +36,21 @@ Route::group([
     Route::get('/change-status/{id}', [NewsController::class, 'activation'])->name('change-status');
     Route::delete('/delete-news/{id}', [NewsController::class, 'destroy'])->name('delete-news');
     Route::get('/get-news-json', [NewsController::class, 'getNewsJson'])->name('index.json');
+});
+
+Route::group([
+    'prefix' => 'member',
+    'as' => 'member.'
+], function () {
+    Route::get('/', [MemeberController::class, 'index'])->name('member');
+    Route::get('/create', [MemeberController::class, 'create'])->name('create-member');
+    Route::post('/store', [MemeberController::class, 'store'])->name('store-member');
+    Route::get('/edit/{id}', [MemeberController::class, 'show'])->name('show-member');
+    Route::get('/get-member', [MemeberController::class, 'getAjaxMembersData'])->name('get-member');
+    Route::put('/update-member/{id}', [MemeberController::class, 'update'])->name('update-member');
+    Route::get('/change-status/{id}', [MemeberController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-member/{id}', [MemeberController::class, 'destroy'])->name('delete-member');
+    Route::get('/get-member-json', [MemeberController::class, 'getmemberJson'])->name('index.json');
 });
 
 require __DIR__.'/auth.php';
