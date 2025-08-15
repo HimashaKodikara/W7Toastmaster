@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="overflow-hidden rounded-xl border border-gray-200/60">
-                        <div class="overflow-x-auto">
+                        <div class="">
                             <table id="memberTable" class="w-full">
                                 <thead>
                                     <tr class="bg-gradient-to-r from-gray-50 to-gray-100">

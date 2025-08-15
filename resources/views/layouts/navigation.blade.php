@@ -23,7 +23,7 @@
                         {{ __('Gallery') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('event.event') }}">
                         {{ __('Events') }}
                     </x-nav-link>
 

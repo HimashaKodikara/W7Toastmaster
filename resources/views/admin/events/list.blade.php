@@ -13,21 +13,21 @@
                                 <i class="fas fa-users text-white text-xl"></i>
                             </div>
                             <div>
-                                <h1 class="text-3xl font-bold text-gray-900">Gallery Management</h1>
+                                <h1 class="text-3xl font-bold text-gray-900">Event Management</h1>
                             </div>
                         </div>
                         <p class="text-gray-700 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-lg inline-block shadow-sm">
-                            Manage your gallery effectively
+                            Manage your  events effectively
                         </p>
                     </div>
 
                     <div class="flex flex-wrap gap-3 justify-center lg:justify-end">
-                        <a href="{{ route('gallery.create-gallery') }}" class="group">
+                        <a href="{{ route('event.create-event') }}" class="group">
                             <button class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 group-hover:translate-y-[-2px]">
                                 <div class="w-5 h-5 mr-2 bg-white/20 rounded-full flex items-center justify-center">
                                     <i class="fas fa-plus text-xs"></i>
                                 </div>
-                                Add New Image
+                                Add New Event
                             </button>
                         </a>
                     </div>
@@ -56,7 +56,7 @@
 
                     <div class="overflow-hidden rounded-xl border border-gray-200/60">
                         <div class="">
-                            <table id="galleryTable" class="w-full">
+                            <table id="eventTable" class="w-full">
                                 <thead>
                                     <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
                                         <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border-r border-gray-200/60">
@@ -68,7 +68,7 @@
                                         <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border-r border-gray-200/60">
                                             <div class="flex items-center justify-center">
                                                 <i class="fas fa-user text-gray-500 mr-2"></i>
-                                                Image Name
+                                                Event Title
                                             </div>
                                         </th>
                                         <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border-r border-gray-200/60">
@@ -113,11 +113,11 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable with enhanced configuration
-            var table = $('#galleryTable').DataTable({
+            var table = $('#eventTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route('gallery.get-gallery') }}',
+                    url: '{{ route('event.get-event') }}',
                     type: 'GET',
                     error: function (xhr, error, code) {
                         console.log('Ajax error:', xhr.responseText);
@@ -144,7 +144,7 @@
                     search: '',
                     searchPlaceholder: 'Search members...',
                     info: 'Showing _START_ to _END_ of _TOTAL_ members',
-                    infoEmpty: 'No gallery found',
+                    infoEmpty: 'No Events found',
                     infoFiltered: '(filtered from _MAX_ total members)',
                     lengthMenu: 'Show _MENU_ members per page',
                     zeroRecords: '<div class="text-center py-8"><div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-gray-400 text-2xl"></i></div><h3 class="text-lg font-semibold text-gray-900 mb-2">No event found</h3><p class="text-gray-600">Try adjusting your search criteria or add your first member.</p></div>',
@@ -166,15 +166,15 @@
                         }
                     },
                     {
-                        data: 'image_name',
-                        name: 'image_name',
-                        title: 'Image Name',
+                        data: 'topic',
+                        name: 'topic',
+                        title: 'Event Title',
                         className: 'font-medium text-gray-900 px-6 py-4 text-center',
                     },
                     {
                         data: 'activation',
                         name: 'activation',
-                        title: 'Image Status',
+                        title: 'Event Status',
                         orderable: false,
                         searchable: false,
                         className: 'text-center px-6 py-4'
@@ -182,7 +182,7 @@
                     {
                         data: 'edit',
                         name: 'edit',
-                        title: 'Edit Member',
+                        title: 'Edit Event',
                         orderable: false,
                         searchable: false,
                         className: 'text-center px-6 py-4'
@@ -190,7 +190,7 @@
                     {
                         data: 'delete',
                         name: 'delete',
-                        title: 'Delete Member',
+                        title: 'Delete Event',
                         orderable: false,
                         searchable: false,
                         className: 'text-center px-6 py-4'
@@ -201,7 +201,7 @@
                     updateStats();
 
                     // Add hover effects and animations
-                    $('#galleryTable tbody tr').hover(
+                    $('#eventTable tbody tr').hover(
                         function() {
                             $(this).addClass('transform scale-[1.01] shadow-lg');
                         },
@@ -233,7 +233,7 @@
             }
 
             // Processing indicator
-            $('#galleryTable').on('processing.dt', function(e, settings, processing) {
+            $('#eventTable').on('processing.dt', function(e, settings, processing) {
                 if (processing) {
                     $(this).addClass('opacity-50');
                 } else {

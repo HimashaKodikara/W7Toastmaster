@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Adminpanel\NewsController;
+use App\Http\Controllers\Adminpanel\EventsController;
 use App\Http\Controllers\Adminpanel\GalleryController;
 use App\Http\Controllers\Adminpanel\MemeberController;
 use App\Http\Controllers\Adminpanel\ContactUsController;
@@ -85,5 +86,22 @@ Route::group([
 
 
 });
+
+
+Route::group([
+    'prefix' => 'event',
+    'as' => 'event.'
+], function () {
+    Route::get('/', [EventsController::class, 'index'])->name('event');
+    Route::get('/create', [EventsController::class, 'create'])->name('create-event');
+    Route::post('/store', [EventsController::class, 'store'])->name('store-event');
+    Route::get('/edit/{id}', [EventsController::class, 'show'])->name('show-event');
+    Route::get('/get-event', [EventsController::class, 'getAjaxEventData'])->name('get-event');
+    Route::put('/update-event/{id}', [EventsController::class, 'update'])->name('update-event');
+    Route::get('/change-status/{id}', [EventsController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-event/{id}', [EventsController::class, 'destroy'])->name('delete-event');
+    Route::get('/get-event-json', [EventsController::class, 'geteventJson'])->name('index.json');
+});
+
 
 require __DIR__.'/auth.php';

@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="overflow-hidden rounded-xl border border-gray-200/60">
-                        <div class="overflow-x-auto">
+                        <div class="">
                             <table id="newsTable" class="w-full">
                                 <thead>
                                     <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
@@ -147,7 +147,7 @@
                     search: '',
                     searchPlaceholder: 'Search articles...',
                     info: 'Showing _START_ to _END_ of _TOTAL_ articles',
-                    infoEmpty: 'No articles found',
+                    infoEmpty: 'No news found',
                     infoFiltered: '(filtered from _MAX_ total articles)',
                     lengthMenu: 'Show _MENU_ articles per page',
                     zeroRecords: '<div class="text-center py-8"><div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-newspaper text-gray-400 text-2xl"></i></div><h3 class="text-lg font-semibold text-gray-900 mb-2">No articles found</h3><p class="text-gray-600">Try adjusting your search criteria or add your first article.</p></div>',
