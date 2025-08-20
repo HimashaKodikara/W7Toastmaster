@@ -7,6 +7,7 @@ use App\Http\Controllers\Adminpanel\EventsController;
 use App\Http\Controllers\Adminpanel\GalleryController;
 use App\Http\Controllers\Adminpanel\MemeberController;
 use App\Http\Controllers\Adminpanel\ContactUsController;
+use App\Http\Controllers\Adminpanel\AchivementsController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -103,5 +104,20 @@ Route::group([
     Route::get('/get-event-json', [EventsController::class, 'geteventJson'])->name('index.json');
 });
 
+
+Route::group([
+    'prefix' => 'achivements',
+    'as' => 'achivements.'
+], function () {
+    Route::get('/', [AchivementsController::class, 'index'])->name('achivements');
+    Route::get('/create', [AchivementsController::class, 'create'])->name('create-achivements');
+    Route::post('/store', [AchivementsController::class, 'store'])->name('store-achivements');
+    Route::get('/edit/{id}', [AchivementsController::class, 'show'])->name('show-achivements');
+    Route::get('/get-achivements', [AchivementsController::class, 'getAjaxAchievementData'])->name('get-achivements');
+    Route::put('/update-achivements/{id}', [AchivementsController::class, 'update'])->name('update-achivements');
+    Route::get('/change-status/{id}', [AchivementsController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-achivements/{id}', [AchivementsController::class, 'destroy'])->name('delete-achivements');
+    Route::get('/get-achivements-json', [AchivementsController::class, 'geteventJson'])->name('index.json');
+});
 
 require __DIR__.'/auth.php';

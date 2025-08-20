@@ -27,7 +27,7 @@
                         {{ __('Events') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('achivements.achivements') }}">
                         {{ __('Achievements') }}
                     </x-nav-link>
 

@@ -10,7 +10,7 @@ class Achivements extends Model
     use SoftDeletes;
      protected $fillable = [
         'front_image',
-        'images',
+        'gallery_images',
         'title',
         'body',
         'status',
@@ -19,6 +19,6 @@ class Achivements extends Model
     ];
 
     protected $casts = [
-    'images' => 'array',
+    'gallery_images' => 'array',
 ];
 }
