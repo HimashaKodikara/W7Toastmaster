@@ -31,7 +31,7 @@
                         {{ __('Achievements') }}
                     </x-nav-link>
 
-                    <x-nav-link >
+                    <x-nav-link href="{{ route('testimonial.testimonial') }}">
                         {{ __('Testimonials') }}
                     </x-nav-link>
 

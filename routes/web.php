@@ -8,6 +8,7 @@ use App\Http\Controllers\Adminpanel\GalleryController;
 use App\Http\Controllers\Adminpanel\MemeberController;
 use App\Http\Controllers\Adminpanel\ContactUsController;
 use App\Http\Controllers\Adminpanel\AchivementsController;
+use App\Http\Controllers\Adminpanel\TestermonialController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -118,6 +119,20 @@ Route::group([
     Route::get('/change-status/{id}', [AchivementsController::class, 'activation'])->name('change-status');
     Route::delete('/delete-achivements/{id}', [AchivementsController::class, 'destroy'])->name('delete-achivements');
     Route::get('/get-achivements-json', [AchivementsController::class, 'geteventJson'])->name('index.json');
+});
+
+Route::group([
+    'prefix' => 'testimonial',
+    'as' => 'testimonial.'
+], function () {
+    Route::get('/', [TestermonialController::class, 'index'])->name('testimonial');
+    Route::get('/create', [TestermonialController::class, 'create'])->name('create-testimonial');
+    Route::post('/store', [TestermonialController::class, 'store'])->name('store-testimonial');
+    Route::get('/edit/{id}', [TestermonialController::class, 'show'])->name('show-testimonial');
+    Route::get('/get-testimonial', [TestermonialController::class, 'getAjaxTestimonialsData'])->name('get-testimonial');
+    Route::put('/update-testimonial/{id}', [TestermonialController::class, 'update'])->name('update-testimonial');
+    Route::get('/change-status/{id}', [TestermonialController::class, 'activation'])->name('change-status');
+    Route::delete('/delete-testimonial/{id}', [TestermonialController::class, 'destroy'])->name('delete-testimonial');
 });
 
 require __DIR__.'/auth.php';
